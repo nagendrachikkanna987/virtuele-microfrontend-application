@@ -1,41 +1,115 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { setProjects, setSelectedProject } from '@/store/slices/projectSlice';
+import { Project, setProjects, setSelectedProject } from '@/store/slices/projectSlice';
+import { fetchProjectList } from '@/api/project';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Search, Filter, Grid, MoreVertical, Star } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { ScrollArea } from '@/app/components/ui/scroll-area';
 
+const parsePositiveNumber = (value: unknown, fallback: number) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const padBase64Url = (value: string) => {
+  let normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+  while (normalized.length % 4 !== 0) {
+    normalized += '=';
+  }
+  return normalized;
+};
+
+const getUserIdFromToken = (): number | undefined => {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return undefined;
+  }
+
+  const [, payloadSegment] = token.split('.');
+  if (!payloadSegment) {
+    return undefined;
+  }
+
+  try {
+    const decoded = JSON.parse(atob(padBase64Url(payloadSegment))) as Record<string, unknown>;
+    const candidate =
+      decoded.userId ?? decoded.sub ?? decoded.uid ?? decoded.preferred_username ?? decoded.id;
+
+    if (typeof candidate === 'number') {
+      return candidate;
+    }
+
+    if (typeof candidate === 'string' && candidate.trim()) {
+      const parsed = Number(candidate);
+      if (!Number.isNaN(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error('Unable to decode token payload', error);
+  }
+
+  return undefined;
+};
+
 const ProjectListApp = () => {
   const dispatch = useDispatch();
   const { projects, selectedProject } = useSelector((state: RootState) => state.project);
+  const { selectedCompany } = useSelector((state: RootState) => state.companyAuth);
+  const selectedCompanyId = selectedCompany?.companyId;
 
   useEffect(() => {
-    // Mock project data
-    const mockProjects = [
-      { id: '1', name: 'ReactMarkup01', jobNumber: 'markup01', status: 'active' },
-      { id: '2', name: '16Oct2025_01', jobNumber: 'Pro-01', status: 'active' },
-      { id: '3', name: '31Oct2025_01', jobNumber: '311025-01', status: 'active' },
-      { id: '4', name: 'Documents_Rules', jobNumber: 'docrules', status: 'active' },
-      { id: '5', name: 'FM module test', jobNumber: 'Rishi', status: 'active' },
-      { id: '6', name: 'MarkupTest_Virtuele', jobNumber: 'MT-VIR-1', status: 'active' },
-      { id: '7', name: 'ReactMarkup04', jobNumber: 'markup04', status: 'active' },
-      { id: '8', name: 'ReactMarkup05', jobNumber: 'markup05', status: 'active' },
-      { id: '9', name: 'ReactMarkup06', jobNumber: 'markup06', status: 'active' },
-      { id: '10', name: 'RolexTesting', jobNumber: '', status: 'active' },
-    ];
+    if (!selectedCompanyId) {
+      return;
+    }
 
-    dispatch(setProjects(mockProjects));
-  }, [dispatch]);
+    const controller = new AbortController();
+    let isActive = true;
 
-  const handleProjectSelect = (project: any) => {
+    const companyId = parsePositiveNumber(selectedCompanyId, 1);
+    const userId = getUserIdFromToken() ?? 16;
+
+    const fetchProjects = async () => {
+      try {
+        const normalizedProjects = await fetchProjectList(
+          { companyId, userId, projectStatus: 'OPEN' },
+          controller.signal
+        );
+
+        if (!isActive) {
+          return;
+        }
+
+        dispatch(setProjects(normalizedProjects));
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+        console.error('Failed to load project list', error);
+      }
+    };
+
+    fetchProjects();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [dispatch, selectedCompanyId]);
+
+  const handleProjectSelect = (project: Project) => {
     dispatch(setSelectedProject(project));
   };
 
   return (
-    <div className="h-full bg-white border-r border-gray-200 flex flex-col">
+    <div className="h-full bg-white border-r border-gray-200 flex flex-col min-h-0 overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
@@ -71,12 +145,12 @@ const ProjectListApp = () => {
           <Button variant="outline" size="sm">
             <Grid className="w-4 h-4" />
           </Button>
-          <span className="text-xs text-gray-500">16</span>
+          <span className="text-xs text-gray-500">{projects.length}</span>
         </div>
       </div>
 
       {/* Project List */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 min-h-0">
         <div className="p-2">
           {projects.map((project) => (
             <button
