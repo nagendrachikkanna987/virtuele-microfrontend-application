@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import federation from '@originjs/vite-plugin-federation'
 
 export default defineConfig({
   plugins: [
@@ -9,6 +10,12 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    federation({
+      remotes: {
+        projectList: 'http://localhost:4173/assets/remoteEntry.js',
+        projectCard: 'http://localhost:4174/assets/remoteEntry.js',
+      },
+    }),
   ],
   resolve: {
     alias: {
