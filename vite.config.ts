@@ -15,6 +15,12 @@ export default defineConfig({
         projectList: 'http://localhost:4173/assets/remoteEntry.js',
         projectCard: 'http://localhost:4174/assets/remoteEntry.js',
       },
+      shared: {
+        react: { singleton: true, requiredVersion: '18.3.1' },
+        'react-dom': { singleton: true, requiredVersion: '18.3.1' },
+        axios: { singleton: true, requiredVersion: '^1.13.2' },
+        'lucide-react': { singleton: true },
+      },
     }),
   ],
   resolve: {

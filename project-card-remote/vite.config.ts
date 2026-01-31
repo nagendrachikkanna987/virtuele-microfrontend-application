@@ -12,7 +12,11 @@ export default defineConfig({
       exposes: {
         './ProjectCardRemote': './src/components/ProjectCardRemote.tsx',
       },
-      shared: ['react', 'react-dom', 'lucide-react'],
+      shared: {
+        react: { singleton: true, requiredVersion: '18.3.1' },
+        'react-dom': { singleton: true, requiredVersion: '18.3.1' },
+        'lucide-react': { singleton: true },
+      },
     }),
   ],
   resolve: {

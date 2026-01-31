@@ -12,7 +12,12 @@ export default defineConfig({
       exposes: {
         './ProjectListRemote': './src/components/ProjectListRemote.tsx',
       },
-    shared: ['react', 'react-dom', 'axios', 'lucide-react'],
+      shared: {
+        react: { singleton: true, requiredVersion: '18.3.1' },
+        'react-dom': { singleton: true, requiredVersion: '18.3.1' },
+        axios: { singleton: true, requiredVersion: '^1.13.2' },
+        'lucide-react': { singleton: true },
+      },
     }),
   ],
   resolve: {
