@@ -1,6 +1,7 @@
 import { Card } from './card';
 import { FileText, Box, Map, CheckCircle, Upload, Settings, FileImage, Workflow } from 'lucide-react';
 import { Project } from '@shell/store/slices/projectSlice';
+import '../main.css';
 
 type Props = {
   project: Project | null;

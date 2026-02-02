@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchProjectList, type ProjectListPayload } from '@shell/api/project';
 import { Project } from '@shell/store/slices/projectSlice';
 import { Grid, Search, Star, MoreVertical } from 'lucide-react';
+import '../main.css';
 
 type Props = {
   companyId?: number;
