@@ -104,19 +104,17 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1">
                   <span className="font-medium">
-                    {selectedProject?.name || '16Oct2025_01'}
+                    {selectedProject?.name || 'Project Name'}
                   </span>
                   <ChevronDown className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>16Oct2025_01</DropdownMenuItem>
-                <DropdownMenuItem>31Oct2025_01</DropdownMenuItem>
-              </DropdownMenuContent>
             </DropdownMenu>
 
             <span className="mx-2">/</span>
-            <span className="text-gray-400">4Pro-01</span>
+            <span className="text-gray-400">
+              {selectedProject?.jobNumber || 'Job Number'}
+            </span>
           </div>
         </div>
 
