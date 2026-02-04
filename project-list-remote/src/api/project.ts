@@ -1,5 +1,5 @@
 import axiosInstance from './axiosConfig';
-import { Project } from '@/store/slices/projectSlice';
+import { Project } from '../store/slices/projectSlice';
 
 type ApiProject = Record<string, unknown>;
 
@@ -83,6 +83,7 @@ export const fetchProjectList = async (
   payload: ProjectListPayload,
   signal?: AbortSignal
 ): Promise<Project[]> => {
+  debugger;
   const response = await axiosInstance.post(
     '/api/project/list/base-info',
     {

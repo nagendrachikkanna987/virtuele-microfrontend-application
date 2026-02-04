@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchProjectList, type ProjectListPayload } from '@shell/api/project';
-import { Project } from '@shell/store/slices/projectSlice';
+import { fetchProjectList, type ProjectListPayload } from '../api/project';
+import { Project } from '../store/slices/projectSlice';
 import { Grid, Search, Star, MoreVertical } from 'lucide-react';
 import '../main.css';
 
@@ -58,7 +58,7 @@ const ProjectListRemote = ({
     return () => {
       isMounted = false;
     };
-  }, [companyId, userId, selectedProjectId, onProjectSelect]);
+  }, [companyId, userId, onProjectSelect]);
 
   const renderList = () => {
     if (!companyId) {
