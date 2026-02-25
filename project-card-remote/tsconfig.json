@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@shell/*": ["../src/*"]
+      "@shell/*": ["../shall-app/src/*"]
     }
   },
   "include": ["src"]

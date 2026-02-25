@@ -21,7 +21,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@shell': path.resolve(__dirname, '../src'),
+      '@shell': path.resolve(__dirname, '../shall-app/src'),
     },
   },
   build: {

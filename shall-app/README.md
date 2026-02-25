@@ -24,7 +24,7 @@
 --------------------------------------------------------------------------------------
 Run locally
 Open Terminal 01
-cd project-lsit-remote
+cd project-list-remote
 npm install
 npm run build
 npm run preview    or  npm run -- --port 4173
