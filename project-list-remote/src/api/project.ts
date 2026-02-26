@@ -1,5 +1,11 @@
 import axiosInstance from './axiosConfig';
-import { Project } from '@/store/slices/projectSlice';
+
+export interface Project {
+  id: string;
+  name: string;
+  jobNumber: string;
+  status?: string;
+}
 
 type ApiProject = Record<string, unknown>;
 
